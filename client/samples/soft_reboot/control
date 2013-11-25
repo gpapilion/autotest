@@ -17,7 +17,10 @@ ITERATIONS = 5
 tries = job.get_state('soft_reboot_tries', 0) + 1
 job.set_state("soft_reboot_tries", tries)
 
-if tries < ITERATIONS:
+if tries > 1:
+    job.end_reboot()
+
+if tries <= ITERATIONS:
     import sys
     this_functions_name = sys._getframe().f_code.co_name
     if this_functions_name != "?":
@@ -25,6 +28,5 @@ if tries < ITERATIONS:
         # not using the step engine and thus no next step is
         # necessary
         job.next_step_prepend(this_functions_name)
-
-if tries <= ITERATIONS:
+    job.start_reboot()
     job.reboot()
